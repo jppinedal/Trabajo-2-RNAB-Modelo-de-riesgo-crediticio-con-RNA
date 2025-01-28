@@ -1,4 +1,8 @@
-# Redes-Neuronales-y-Algoritmos-Bioinspirados
+# Redes Neuronales y AlgoritmosBioinspirados
+
+![logoUN](https://github.com/user-attachments/assets/6a75b35f-c2f7-425e-8a39-6d1384be3244)
+
+
 
 ## Modelos de riesgo de crédito con RNA
 
