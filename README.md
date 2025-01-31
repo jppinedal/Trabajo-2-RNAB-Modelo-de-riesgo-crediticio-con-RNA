@@ -12,6 +12,24 @@ minimizar riesgos y optimizar estrategias de concesión de créditos.
 A continuación, se presenta el proceso de desarrollo de una RNA que nos permite abordar este problema, ayudándonos a predecir 
 el perfil de riesgo de un cliente dado, además de su puntaje crediticio basado en sus datos.
 
+Metodología
+
+Preprocesamiento de datos:
+
+   Conversión de la variable "loan_status" en binaria (1: Incumplimiento, 0: Cumplimiento).
+
+   Manejo de valores faltantes.
+
+   Normalización y codificación de variables categóricas.
+
+Análisis descriptivo:
+
+   Distribución de la variable objetivo.
+
+   Análisis de correlación entre variables.
+
+   Identificación de patrones en clientes con alto riesgo de incumplimiento
+
 ## Grupo 6
 Integrantes: 
   - Valentina Ospina Narváez - vospinan@unal.edu.co
