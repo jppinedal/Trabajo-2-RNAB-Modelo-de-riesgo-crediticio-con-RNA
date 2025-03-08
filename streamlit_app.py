@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.graph_objects as go
 from tensorflow.keras.models import load_model
+import plotly.graph_objects as go
 import pickle
 
 # Configuración de la página
@@ -10,12 +10,102 @@ st.set_page_config(page_title="Scorecard de Riesgo Crediticio", layout="wide")
 
 # Cargar modelo y scaler
 try:
-    model = load_model('src/modelo_credito.keras')
+    model = load_model('src/loan_model.keras')
     with open('src/scaler.pkl', 'rb') as f:
         scaler = pickle.load(f)
+    with open("src/pca.pkl", "rb") as f:
+        pca = pickle.load(f)
+    st.success("Modelo y scaler cargados exitosamente")
 except Exception as e:
-    st.error(f"Error al cargar modelo o scaler: {e}")
+    st.error(f"Error al cargar el modelo o scaler: {e}")
     st.stop()
+
+# Título de la aplicación
+st.title("Datos Financieros para Calcular Scorecard de Riesgo Financiero")
+st.write("Ingrese los datos para realizar el cálculo.")
+
+# Campos de entrada solicitados
+annual_inc = st.number_input("Ingresos anuales (annual_inc)", min_value=0.01, value=60000.0, step=1000.0)
+
+dti = st.slider("Relación Deuda-Ingreso (Debit-to-Income Ratio dti)", 0.0, 100.0, 25.0, help="Relación calculada usando el total de pagos mensuales de deuda del prestatario sobre sus obligaciones totales de deuda, dividido por el ingreso mensual reportado.")
+
+# Mapeo de subgrados a valores numéricos
+sub_grade_options = {"A": 7, "B": 6, "C": 5, "D": 4, "E": 3, "F": 2, "G": 1}
+
+# Escalas de 0.2 para los números
+sub_grade_input = st.selectbox("Sub Grade", options=[f"{letter}{num}" for letter in sub_grade_options.keys() for num in range(1, 6)])
+
+sub_grade_letter = sub_grade_input[0]
+sub_grade_number = int(sub_grade_input[1])  
+
+# Calcular el valor con escala de 0.2
+sub_grade = sub_grade_options[sub_grade_letter] + (sub_grade_number - 1) * 0.2
+
+
+open_acc = st.number_input("Líneas de crédito abiertas por el usuario (open_acc)", min_value=0.0, value=0.0, step=1.0)
+
+total_acc = st.number_input("Líneas totales de crédito en el expediente del usuario (total_acc)", min_value=0.0, value=0.0, step=1.0)
+
+inq_last_6mths = st.number_input("Número consultas en los últimos 6 meses (inq_last_6mths)", min_value=0.0, value=0.0, step=1.0)
+
+delinq_2yrs = st.number_input("Número de incidencias de morosidad de más de 30 días en los últimos 2 años (delinq_2yrs))", min_value=0.0, value=0.0, step=1.0)
+
+int_rate = st.slider("Tasa de interés (%)", 0.0, 100.0, 10.0, help="Tasa de interés anual del préstamo.")
+
+pub_rec = st.number_input("Número de registros públicos derogatorios (pub_rec))", min_value=0.0, value=0.0, step=1.0, help="Cantidad de registros públicos negativos o adversos asociados a una persona o entidad en su historial financiero.")
+
+# Lista desplegable para home_ownership
+home_ownership_options = [
+    "ANY", 
+    "MORTGAGE",
+    "NONE",
+    "OTHER", 
+    "OWN",
+    "RENT"
+]
+home_ownership = st.selectbox("Tipo de propiedad de vivienda", options=home_ownership_options)
+
+# Lista desplegable para purpose
+purpose_options = [
+    'car',
+    'credit_card',
+    'debt_consolidation',
+    'educational',
+    'home_improvement',
+    'house',
+    'major_purchase',
+    'medical',
+    'moving',
+    'other',
+    'renewable_energy',
+    'small_business',
+    'vacation',
+    'wedding'
+]
+purpose = st.selectbox("Propósito del préstamo (purpose))", options=purpose_options)
+
+# Plazo del préstamo en meses
+# Opciones de plazo del préstamo
+term_options = {"36 months": 0, "64 months": 1}
+
+# Selector de plazo
+term_selected = st.selectbox("Plazo del préstamo (term)", options=list(term_options.keys()))
+
+# Convertir la selección a su valor correspondiente
+term = term_options[term_selected]
+
+# Verification status
+verification_status_options = {"Not Verified": 0, "Source Verified": 0, "Verified": 2}
+
+# Selector de estado de verificación
+verification_status_selected = st.selectbox("Estado de verificación del usuario (verification_status)", options=list(verification_status_options.keys()))
+
+# Convertir la selección a su valor correspondiente
+verification_status = verification_status_options[verification_status_selected]
+
+
+# Cuota mensual
+monthly_installment = st.number_input("Cuota mensual (monthly_installment)", min_value=0.01, value=250.0, step=10.0, help="El pago mensual adeudado por el prestatario si el préstamo se origina.")
 
 # Función para convertir probabilidad a puntaje FICO y categoría de riesgo
 def probabilidad_a_fico(probabilidad):
@@ -30,124 +120,87 @@ def probabilidad_a_fico(probabilidad):
         categoria = "Pobre"
     return fico_score, categoria
 
-# Entrada de datos por parte del usuario
-st.title("Datos Financieros para Calcular Scorecard de Riesgo Financiero")
-st.write("Ingrese los datos para realizar el cálculo.")
-
-# Campos de entrada con nombres mejorados y descripciones en USD
-loan_amount = st.number_input("Monto del préstamo solicitado (USD)", min_value=1000, max_value=100000, value=10000, help="El monto del préstamo solicitado por el prestatario. Si el departamento de crédito lo reduce, se reflejará aquí.")
-interest_rate = st.slider("Tasa de interés anual (%)", 1.0, 30.0, 12.5, help="Tasa de interés anual del préstamo.")
-monthly_installment = st.number_input("Cuota mensual (USD)", min_value=50.0, max_value=3000.0, value=315.33, help="El pago mensual adeudado por el prestatario si el préstamo se origina.")
-annual_income = st.number_input("Ingreso anual reportado (USD)", min_value=10000, max_value=500000, value=65000, help="El ingreso anual reportado por el prestatario durante el registro.")
-debt_to_income_ratio = st.slider("Relación Deuda/Ingreso (DTI) (%)", 0.0, 100.0, 20.5, help="Relación calculada usando el total de pagos mensuales de deuda del prestatario sobre sus obligaciones totales de deuda, excluyendo hipotecas y el préstamo solicitado, dividido por el ingreso mensual reportado.")
-delinquencies_past_2yrs = st.number_input("Número de delincuencias pasadas (2 años)", 0, 20, 0, help="El número de incidencias de delincuencia de 30+ días pasadas en el archivo de crédito del prestatario en los últimos 2 años.")
-inquiries_last_6mths = st.number_input("Consultas de crédito recientes (6 meses)", 0, 20, 2, help="El número de consultas de crédito en los últimos 6 meses (excluyendo consultas de auto y hipoteca).")
-open_credit_lines = st.number_input("Líneas de crédito abiertas", 0, 50, 8, help="El número de líneas de crédito abiertas en el archivo de crédito del prestatario.")
-public_records = st.number_input("Registros públicos negativos", 0, 20, 0, help="Número de registros públicos derogatorios.")
-revolving_balance = st.number_input("Saldo de crédito rotativo (USD)", 0, 100000, 15000, help="Total del saldo de crédito rotativo.")
-revolving_utilization = st.slider("Utilización del crédito rotativo (%)", 0.0, 100.0, 55.5, help="Porcentaje de crédito rotativo utilizado por el prestatario en relación con todo el crédito disponible.")
-total_credit_lines = st.number_input("Total de líneas de crédito", 0, 100, 12, help="El número total de líneas de crédito actualmente en el archivo de crédito del prestatario.")
-employment_length = st.slider("Años de empleo", 0, 10, 5, help="Duración del empleo en años. Los valores posibles están entre 0 y 10, donde 0 significa menos de un año y 10 significa diez o más años.")
-
-# Preparar datos para predicción
-loan_data = {
-    'loan_amnt': loan_amount,
-    'int_rate': interest_rate,
-    'installment': monthly_installment,
-    'annual_inc': annual_income,
-    'dti': debt_to_income_ratio,
-    'delinq_2yrs': delinquencies_past_2yrs,
-    'inq_last_6mths': inquiries_last_6mths,
-    'open_acc': open_credit_lines,
-    'pub_rec': public_records,
-    'revol_bal': revolving_balance,
-    'revol_util': revolving_utilization,
-    'total_acc': total_credit_lines,
-    'emp_length': employment_length
-}
-
-
+# Botón para calcular y mostrar los datos
 if st.button("Calcular Riesgo"):
-    input_df = pd.DataFrame([loan_data])
+    # Preparamos datos en el orden exacto del ejemplo proporcionado
+    # Orden: [annual_inc, dti, sub_grade, open_acc, total_acc, inq_last_6mths, delinq_2yrs, int_rate, pub_rec, 
+    #         home_ownership (6 valores), purpose (14 valores), term, monthly_installment]
     
-    # Escalar datos
-    input_scaled = scaler.transform(input_df)
+    # One-hot encoding para home_ownership
+    home_ownership_values = [1 if option == home_ownership else 0 for option in home_ownership_options]
     
-    # Realizar predicción
-    probability = model.predict(input_scaled)[0][0]
+    # One-hot encoding para purpose
+    purpose_values = [1 if option == purpose else 0 for option in purpose_options]
     
-    # Convertir probabilidad a puntaje FICO y categoría
-    fico_score, categoria = probabilidad_a_fico(probability)
+    # Crear el array en la estructura específica solicitada
+    input_data = [
+        annual_inc, 
+        dti, 
+        sub_grade, 
+        open_acc, 
+        total_acc, 
+        inq_last_6mths, 
+        delinq_2yrs, 
+        int_rate, 
+        pub_rec
+    ] + home_ownership_values + purpose_values + [term, verification_status, monthly_installment]
+    
+    # Convertir a numpy array con la estructura exacta solicitada
+    nuevo_dato = np.array([input_data])
+    
+    
+    # Mostrar el tamaño y el contenido del array
+    st.write(f"Forma del array: {nuevo_dato.shape}")
+    st.write(nuevo_dato)
+    
+    try:
+        # Aplicar la normalización con el StandardScaler cargado
+        nuevo_dato_scaled = scaler.transform(nuevo_dato)
+        
+        # Aplicar la transformación PCA
+        nuevo_dato_pca = pca.transform(nuevo_dato_scaled)
+        
+        # Realizar la predicción con el modelo cargado
+        probabilidad = model.predict(nuevo_dato_pca)
+        umbral = 0.55  # Se puede ajustar según el problema
+        prediccion = (probabilidad >= umbral).astype(int)  # Usar el mismo umbral ajustado
 
-    # Datos para la scorecard
-    data = pd.DataFrame({
-        'Riesgo': ['Excelente', 'Bueno', 'Aceptable', 'Pobre'],
-        'Porcentaje': [20, 30, 30, 20],  # Ajuste según tu análisis de datos o expectativas
-        'PuntajePromedio': [750, 700, 625, 500]  # Valores aproximados
-    })
+        # Mostrar resultados
+        # Calcular probabilidad de incumplimiento en porcentaje
+        probabilidad_incumplimiento = probabilidad[0][0] * 100  # Convertir a porcentaje
 
-    # Gráfico de barras: Distribución de categorías de riesgo con indicador
-    fig_barras = go.Figure()
-
-    # Barras de las categorías
-    fig_barras.add_trace(go.Bar(
-        x=data['Riesgo'],
-        y=data['Porcentaje'],
-        text=data['Porcentaje'],
-        textposition='auto',
-        marker=dict(color=['#00cc96', '#66ff66', '#ffa600', '#ff4d4d'])
-    ))
-
-    # Ajuste para mostrar el puntaje en el rango correcto de 'Porcentaje'
-    puntaje_en_porcentaje = fico_score * max(data['Porcentaje']) / 850  # Escala el puntaje FICO al rango de porcentaje
-
-    # Indicador visual del puntaje en las barras
-    fig_barras.add_trace(go.Scatter(
-        x=[categoria],
-        y=[puntaje_en_porcentaje],
-        mode='markers+text',
-        marker=dict(size=12, color='white', symbol='diamond'),
-        text=[f"Puntaje FICO: {fico_score:.1f}"],
-        textposition='top center',
-        name='Indicador Puntaje'
-    ))
-
-    fig_barras.update_layout(
-        title='Distribución de Categorías de Riesgo con Indicador',
-        xaxis_title='Categoría de Riesgo',
-        yaxis_title='Porcentaje',
-        template='plotly_white',
-        yaxis_range=[0, max(data['Porcentaje']) * 1.1]  # Asegura que haya espacio para el marcador
-    )
-
-    # Gauge chart (Indicador principal del puntaje)
-    fig_gauge = go.Figure(go.Indicator(
-        mode="gauge+number",
-        value=fico_score,
-        title={'text': "Puntaje FICO"},
-        gauge={
-            'axis': {'range': [300, 850]},
-            'bar': {'color': '#00cc96' if fico_score > 740 else '#66ff66' if fico_score > 670 else '#ffa600' if fico_score > 580 else '#ff4d4d'},
-            'steps': [
-                {'range': [300, 580], 'color': '#ff4d4d'},
-                {'range': [580, 670], 'color': '#ffa600'},
-                {'range': [670, 740], 'color': '#66ff66'},
-                {'range': [740, 850], 'color': '#00cc96'}
-            ],
-            'threshold': {
-                'line': {'color': "black", 'width': 4},
-                'thickness': 0.75,
-                'value': fico_score
+        # Gauge chart (Indicador principal del puntaje de incumplimiento)
+        fig_gauge = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=probabilidad_incumplimiento,
+            title={'text': "Probabilidad de Incumplimiento (%)"},
+            gauge={
+                'axis': {'range': [0, 100]},
+                'bar': {'color': '#ff4d4d' if probabilidad_incumplimiento > 70 else '#ffa600' if probabilidad_incumplimiento > 40 else '#00cc96'},
+                'steps': [
+                    {'range': [0, 40], 'color': '#00cc96'},   # Verde (bajo riesgo)
+                    {'range': [40, 70], 'color': '#ffa600'},  # Naranja (riesgo medio)
+                    {'range': [70, 100], 'color': '#ff4d4d'}  # Rojo (alto riesgo)
+                ],
+                'threshold': {
+                    'line': {'color': "black", 'width': 4},
+                    'thickness': 0.75,
+                    'value': probabilidad_incumplimiento
+                }
             }
-        }
-    ))
+        ))
 
-    # Mostrar scorecard
-    st.title("Scorecard de Riesgo Crediticio")
-    st.write(f"Categoría de Riesgo: *{categoria}*")
-    st.write(f"**Puntaje FICO:** {fico_score:.1f}")
-    st.write("Este scorecard muestra la distribución del riesgo crediticio y el puntaje FICO basado en los datos ingresados.")
+        # Mostrar gráficos
+        # Ajustar el tamaño del gráfico en Streamlit
+        fig_gauge.update_layout(height=400, width=500)  # Tamaño ajustado
 
-    # Mostrar gráficos
-    st.plotly_chart(fig_barras, use_container_width=True)
-    st.plotly_chart(fig_gauge, use_container_width=True)
+        # Mostrar resultados en Streamlit
+        st.success("Predicción completada")
+        st.subheader("Resultados:")
+        st.write(f"Probabilidad de incumplimiento: {probabilidad_incumplimiento:.2f} %")
+        st.write(f"Predicción: {'INCUMPLE' if prediccion[0][0] == 1 else 'CUMPLE'}")
+        st.plotly_chart(fig_gauge)  # Mostrar el gráfico en Streamlit
+
+    except Exception as e:
+        st.error(f"Error durante el proceso: {e}")
+        st.write("Detalles del error:", str(e))
