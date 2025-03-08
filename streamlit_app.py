@@ -138,7 +138,7 @@ if st.button("Calcular Riesgo"):
     
     
     # Mostrar el tamaño y el contenido del array
-    st.write(f"Forma del array: {nuevo_dato.shape}")
+    st.write(f"Forma del input: {nuevo_dato.shape}")
     #st.write(nuevo_dato)
     
     try:
