@@ -107,18 +107,6 @@ verification_status = verification_status_options[verification_status_selected]
 # Cuota mensual
 monthly_installment = st.number_input("Cuota mensual (monthly_installment)", min_value=0.01, value=250.0, step=10.0, help="El pago mensual adeudado por el prestatario si el préstamo se origina.")
 
-# Función para convertir probabilidad a puntaje FICO y categoría de riesgo
-def probabilidad_a_fico(probabilidad):
-    fico_score = 850 - (probabilidad * 550)  # Esto mapea 0 a 850 y 1 a 300
-    if fico_score > 740:  # Excelente (por encima de 740 generalmente se considera excelente para hipotecas)
-        categoria = "Excelente"
-    elif fico_score > 670:  # Bueno (entre 670 y 739 es bueno para hipotecas)
-        categoria = "Bueno"
-    elif fico_score > 580:  # Aceptable (580-669 suele ser el mínimo para muchas hipotecas)
-        categoria = "Aceptable"
-    else:  # Pobre (por debajo de 580 es generalmente visto como alto riesgo)
-        categoria = "Pobre"
-    return fico_score, categoria
 
 # Botón para calcular y mostrar los datos
 if st.button("Calcular Riesgo"):
@@ -151,7 +139,7 @@ if st.button("Calcular Riesgo"):
     
     # Mostrar el tamaño y el contenido del array
     st.write(f"Forma del array: {nuevo_dato.shape}")
-    st.write(nuevo_dato)
+    #st.write(nuevo_dato)
     
     try:
         # Aplicar la normalización con el StandardScaler cargado
