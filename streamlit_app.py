@@ -6,16 +6,19 @@ import plotly.graph_objects as go
 import pickle
 #from pathlib import Path
 
+
+
+# Configuración de la página
+st.set_page_config(page_title="Redes Neuronales y algoritmos Bioinspirados", layout="wide")
+st.text("\n \n")
 # ----- Comienzo de la app ----- #
-st.title("Redes Neuronales y algoritmos Bioinspirados")
 st.subheader("2024-2S - Grupo 6 \n")
+st.title(" Scorecard de Riesgo Crediticio")
+
 
 #current_dir = Path(__file__).parent # Directorio actual para hacer el despliegue
 #file_path = current_dir / "img/logo.png"
 
-# Configuración de la página
-st.set_page_config(page_title="Scorecard de Riesgo Crediticio", layout="wide")
-st.text("\n \n")
 st.link_button("Conoce el informe técnico del proyecto", "https://candy-monkey-1cd.notion.site/Trabajo-02-Modelos-de-riesgo-de-cr-dito-con-RNA-1897a8b98a1980bd96a6c5fe84c84960?pvs=74", icon="📒", help="Haz clic en el enlace para ingresar al sitio web con el infórme técnico")
 st.link_button("Repositorio de Github","https://github.com/jppinedal/Trabajo-2-RNAB-Modelo-de-riesgo-crediticio-con-RNA/tree/main", icon="📁", help="Haz clic en el enlace para conocer los notebook y el código de la app")
 
