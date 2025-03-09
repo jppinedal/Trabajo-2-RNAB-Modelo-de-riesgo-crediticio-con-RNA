@@ -12,9 +12,10 @@ from pathlib import Path
 st.set_page_config(page_title="Redes Neuronales y algoritmos Bioinspirados", layout="wide")
 st.text("\n \n")
 # ----- Comienzo de la app ----- #
-st.subheader("2024-2S - Grupo 6 \n")
 st.title("Redes Neuronales y algoritmos Bioinspirados - Scorecard de Riesgo Crediticio")
-
+st.title(":blue[RISKO] :sunglasses: ")
+st.subheader("Aplicación para Calcular Scorecard de Riesgo crediticio")
+st.text("2024-2S - Grupo 6 \n")
 
 current_dir = Path(__file__).parent # Directorio actual para hacer el despliegue
 file_path = current_dir / "img/logo.png"
@@ -36,8 +37,7 @@ except Exception as e:
     st.stop()
 
 
-st.title(":blue[RISKO] :sunglasses: ")
-st.subheader("Aplicación para Calcular Scorecard de Riesgo crediticio")
+
 st.write("Ingrese los datos para realizar el cálculo.")
 
 # Campos de entrada solicitados
