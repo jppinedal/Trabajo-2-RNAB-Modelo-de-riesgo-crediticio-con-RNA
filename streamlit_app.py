@@ -7,6 +7,9 @@ import pickle
 
 # Configuración de la página
 st.set_page_config(page_title="Scorecard de Riesgo Crediticio", layout="wide")
+st.text("\n \n")
+st.link_button("Conoce el informe técnico del proyecto", "https://candy-monkey-1cd.notion.site/Trabajo-02-Modelos-de-riesgo-de-cr-dito-con-RNA-1897a8b98a1980bd96a6c5fe84c84960?pvs=74", icon="📒", help="Haz clic en el enlace para ingresar al sitio web con el infórme técnico")
+st.link_button("Repositorio de Github","https://github.com/jppinedal/Trabajo-2-RNAB-Modelo-de-riesgo-crediticio-con-RNA/tree/main", icon="📁", help="Haz clic en el enlace para conocer los notebook y el código de la app")
 
 # Cargar modelo y scaler
 try:
@@ -166,8 +169,8 @@ if st.button("Calcular Riesgo"):
                 'axis': {'range': [0, 100]},
                 'bar': {'color': '#ff4d4d' if probabilidad_incumplimiento > 70 else '#ffa600' if probabilidad_incumplimiento > 40 else '#00cc96'},
                 'steps': [
-                    {'range': [0, 40], 'color': '#00cc96'},   # Verde (bajo riesgo)
-                    {'range': [40, 70], 'color': '#ffa600'},  # Naranja (riesgo medio)
+                    {'range': [0, 40], 'color': '#00cc96'},   # (bajo riesgo)
+                    {'range': [40, 70], 'color': '#ffa600'},  # Naranja  (riesgo medio)
                     {'range': [70, 100], 'color': '#ff4d4d'}  # Rojo (alto riesgo)
                 ],
                 'threshold': {
