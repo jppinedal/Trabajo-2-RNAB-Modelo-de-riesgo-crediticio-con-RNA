@@ -195,3 +195,22 @@ if st.button("Calcular Riesgo"):
     except Exception as e:
         st.error(f"Error durante el proceso: {e}")
         st.write("Detalles del error:", str(e))
+
+
+# Pie de página estilizado
+footer_placeholder = st.empty()
+footer_html = """
+    <style>
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: rgba(100, 100, 100, 0.7); /* Gris con opacidad */
+            font-size: 14px;
+        }
+    </style>
+    <div class="footer">
+        2025 Universidad Nacional de Colombia Sede Medellín. <br>
+        Valentina Ospina Narváez, Juan Pablo Pineda Lopera, Juan Camilo Torres Arboleda
+    </div>
+"""
+footer_placeholder.markdown(footer_html, unsafe_allow_html=True)
