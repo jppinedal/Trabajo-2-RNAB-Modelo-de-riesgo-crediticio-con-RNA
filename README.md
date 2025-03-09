@@ -60,11 +60,13 @@ Se implementaron dos modelos de RNA secuenciales utilizando la librería Keras d
 - Capas de Batch Normalization y Dropout para mitigar el sobreajuste.
 - Optimización del umbral de clasificación basado en la métrica F1.
 
+
 > [!NOTE]  
 > [Enlace al informe completo](https://candy-monkey-1cd.notion.site/Trabajo-02-Modelos-de-riesgo-de-cr-dito-con-RNA-1897a8b98a1980bd96a6c5fe84c84960)
 
 ## Grupo 6
 **Integrantes:**
 - Valentina Ospina Narváez - vospinan@unal.edu.co
-- Juan Camilo Torres Arboleda - jutorresar@unal.edu.co
 - Juan Pablo Pineda Lopera - jppinedal@unal.edu.co
+- Juan Camilo Torres Arboleda - jutorresar@unal.edu.co
+
