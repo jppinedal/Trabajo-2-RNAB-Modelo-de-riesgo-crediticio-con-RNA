@@ -12,7 +12,7 @@ from pathlib import Path
 st.set_page_config(page_title="Redes Neuronales y algoritmos Bioinspirados", layout="wide")
 st.text("\n \n")
 # ----- Comienzo de la app ----- #
-st.title("Redes Neuronales y algoritmos Bioinspirados - Scorecard de Riesgo Crediticio")
+st.title("Redes Neuronales y algoritmos Bioinspirados")
 st.title(":blue[RISKO] :sunglasses: ")
 st.subheader("Aplicación para Calcular Scorecard de Riesgo crediticio")
 st.text("2024-2S - Grupo 6 \n")
