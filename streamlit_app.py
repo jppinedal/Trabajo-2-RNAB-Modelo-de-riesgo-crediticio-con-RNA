@@ -211,6 +211,7 @@ footer_html = """
     </style>
     <div class="footer">
         2025 Universidad Nacional de Colombia Sede Medellín. <br>
+        Redes Neuronales y Algortimos Bioinspirados. <br
         Valentina Ospina Narváez, Juan Pablo Pineda Lopera, Juan Camilo Torres Arboleda
     </div>
 """
