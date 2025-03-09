@@ -24,7 +24,8 @@ except Exception as e:
     st.stop()
 
 # Título de la aplicación
-st.title("Datos Financieros para Calcular Scorecard de Riesgo Financiero")
+st.title(":blue[RISKO] :sunglasses: ")
+st.title("Aplicación para Calcular Scorecard de Riesgo Financiero")
 st.write("Ingrese los datos para realizar el cálculo.")
 
 # Campos de entrada solicitados
