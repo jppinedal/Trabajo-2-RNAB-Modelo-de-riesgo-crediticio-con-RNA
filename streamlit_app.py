@@ -5,6 +5,14 @@ from tensorflow.keras.models import load_model
 import plotly.graph_objects as go
 import pickle
 
+
+# ----- Comienzo de la app ----- #
+st.title("Redes Neuronales y algoritmos Bioinspirados")
+st.subheader("2024-2S - Grupo 6 \n")
+
+current_dir = Path(__file__).parent # Directorio actual para hacer el despliegue
+file_path = current_dir / "img/logo.png"
+
 # Configuración de la página
 st.set_page_config(page_title="Scorecard de Riesgo Crediticio", layout="wide")
 st.text("\n \n")
@@ -23,7 +31,7 @@ except Exception as e:
     st.error(f"Error al cargar el modelo o scaler: {e}")
     st.stop()
 
-# Título de la aplicación
+
 st.title(":blue[RISKO] :sunglasses: ")
 st.title("Aplicación para Calcular Scorecard de Riesgo Financiero")
 st.write("Ingrese los datos para realizar el cálculo.")
@@ -198,7 +206,7 @@ if st.button("Calcular Riesgo"):
         st.write("Detalles del error:", str(e))
 
 
-# Pie de página estilizado
+# Pie de página
 footer_placeholder = st.empty()
 footer_html = """
     <style>
@@ -211,7 +219,7 @@ footer_html = """
     </style>
     <div class="footer">
         2025 Universidad Nacional de Colombia Sede Medellín. <br>
-        Redes Neuronales y Algortimos Bioinspirados. <br
+        Redes Neuronales y Algortimos Bioinspirados. <br>
         Valentina Ospina Narváez, Juan Pablo Pineda Lopera, Juan Camilo Torres Arboleda
     </div>
 """
