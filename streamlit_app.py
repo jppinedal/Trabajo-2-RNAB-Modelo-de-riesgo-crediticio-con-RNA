@@ -13,7 +13,7 @@ st.set_page_config(page_title="Redes Neuronales y algoritmos Bioinspirados", lay
 st.text("\n \n")
 # ----- Comienzo de la app ----- #
 st.subheader("2024-2S - Grupo 6 \n")
-st.title(" Scorecard de Riesgo Crediticio")
+st.title("Redes Neuronales y algoritmos Bioinspirados - Scorecard de Riesgo Crediticio")
 
 
 current_dir = Path(__file__).parent # Directorio actual para hacer el despliegue
@@ -37,7 +37,7 @@ except Exception as e:
 
 
 st.title(":blue[RISKO] :sunglasses: ")
-st.title("Aplicación para Calcular Scorecard de Riesgo Financiero")
+st.subheader("Aplicación para Calcular Scorecard de Riesgo crediticio")
 st.write("Ingrese los datos para realizar el cálculo.")
 
 # Campos de entrada solicitados
