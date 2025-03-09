@@ -10,8 +10,8 @@ from pathlib import Path
 st.title("Redes Neuronales y algoritmos Bioinspirados")
 st.subheader("2024-2S - Grupo 6 \n")
 
-current_dir = Path(__file__).parent # Directorio actual para hacer el despliegue
-file_path = current_dir / "img/logo.png"
+#current_dir = Path(__file__).parent # Directorio actual para hacer el despliegue
+#file_path = current_dir / "img/logo.png"
 
 # Configuración de la página
 st.set_page_config(page_title="Scorecard de Riesgo Crediticio", layout="wide")
