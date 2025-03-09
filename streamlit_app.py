@@ -4,7 +4,7 @@ import numpy as np
 from tensorflow.keras.models import load_model
 import plotly.graph_objects as go
 import pickle
-
+from pathlib import Path
 
 # ----- Comienzo de la app ----- #
 st.title("Redes Neuronales y algoritmos Bioinspirados")
